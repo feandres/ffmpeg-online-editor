@@ -24,7 +24,8 @@ export default function EditingPage({
     onApply(command);
   };
 
-  const focusRing = "focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2";
+  const focusRing =
+    "focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2";
 
   return (
     <form
@@ -58,7 +59,10 @@ export default function EditingPage({
             />
           </div>
           {error && (
-            <div className="text-red-600 text-sm flex items-center gap-2" role="alert">
+            <div
+              className="text-red-600 text-sm flex items-center gap-2"
+              role="alert"
+            >
               <Info className="w-4 h-4" /> {error}
             </div>
           )}
@@ -82,6 +86,42 @@ export default function EditingPage({
             )}
           </Button>
         </CardContent>
+        <div className="bg-slate-50 border border-slate-200 rounded-md p-4 text-sm text-slate-700 space-y-2">
+          <p className="font-semibold">Guia rápido de comandos FFmpeg:</p>
+          <ul className="list-disc list-inside space-y-1">
+            <li>
+              <code>-ss 0</code>: início aos 0 segundos
+            </li>
+            <li>
+              <code>-t 3</code>: duração de 3 segundos
+            </li>
+            <li>
+              <code>-vf scale=320:-1</code>: redimensiona para 320px de largura,
+              mantendo proporção
+            </li>
+            <li>
+              <code>-vf fps=10</code>: define 10 quadros por segundo
+            </li>
+            <li>
+              <code>-c:v gif</code>: codec de saída para GIF
+            </li>
+            <li>
+              <code>-an</code>: remove o áudio
+            </li>
+          </ul>
+          <p className="pt-2">
+            Veja mais comandos na{" "}
+            <a
+              href="https://ffmpeg.org/ffmpeg.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              documentação oficial do FFmpeg
+            </a>
+            .
+          </p>
+        </div>
       </Card>
     </form>
   );
