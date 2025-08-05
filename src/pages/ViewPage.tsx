@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-// i18n mock (substitua por uma lib real em produção)
 const t = {
   previewTitle: "Visualização do Resultado",
   previewDesc: "Veja e baixe o conteúdo gerado",

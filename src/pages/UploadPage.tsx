@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { Upload, FileVideo, XCircle } from "lucide-react";
 
-// i18n mock (substitua por uma lib real em produção)
 const t = {
   dropHere: "Solte o vídeo aqui",
   dragOrClick: "Arraste e solte seu vídeo aqui",

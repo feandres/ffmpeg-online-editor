@@ -33,7 +33,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 
-// i18n mock (substitua por uma lib real em produção)
+
 const t = {
   tabs: {
     basic: "Básico",
@@ -259,7 +259,7 @@ export default function EditingPage({
 
         {/* Basic */}
         <TabsContent value="basic" className="mt-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-4 sm:gap-6">
             {/* Trim */}
             <TrimCard
               enabled={enabled.trim}
@@ -365,10 +365,10 @@ export default function EditingPage({
                   <SelectValue placeholder={t.export.select} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="mp4">MP4</SelectItem>
+                  {/* <SelectItem value="mp4">MP4</SelectItem>
                   <SelectItem value="webm">WebM</SelectItem>
                   <SelectItem value="avi">AVI</SelectItem>
-                  <SelectItem value="mov">MOV</SelectItem>
+                  <SelectItem value="mov">MOV</SelectItem> */}
                   <SelectItem value="gif">GIF</SelectItem>
                 </SelectContent>
               </Select>

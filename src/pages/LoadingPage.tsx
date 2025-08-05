@@ -1,4 +1,3 @@
-// i18n mock (substitua por uma lib real em produção)
 const t = {
   loading: "Carregando FFmpeg...",
   initializing: "Inicializando core WebAssembly. Aguarde.",

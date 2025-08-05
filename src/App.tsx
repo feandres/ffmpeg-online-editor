@@ -36,14 +36,6 @@ export default function App() {
 
     const loadFFmpeg = async () => {
       try {
-        ffmpeg.on("log", ({ message }) => {
-          console.debug("[ffmpeg log]", message);
-        });
-
-        ffmpeg.on("progress", (p) => {
-          console.debug("[ffmpeg progress]", p);
-        });
-
         await ffmpeg.load({ coreURL, wasmURL });
         if (!canceled) {
           setReady(true);
@@ -144,7 +136,7 @@ export default function App() {
         <div className="max-w-4xl mx-auto">
           <div className="mb-8 text-center">
             <h1 className="text-4xl font-bold text-slate-800 mb-3">
-              FFmpeg Online Video Editor
+              FFmpeg Online (GIF only)
             </h1>
             <p className="text-slate-600 text-lg">
               Faça upload do seu vídeo para começar a edição
