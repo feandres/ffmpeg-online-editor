@@ -6,11 +6,8 @@ import wasmURL from "@ffmpeg/core/wasm?url";
 
 import LoadingPage from "./pages/LoadingPage";
 import { UploadPage } from "./pages/UploadPage";
-import EditingPage from "./pages/EditingPage";
+import  EditingPage from "./pages/EditingPage";
 import { ViewPage } from "./pages/ViewPage";
-
-import { buildFFmpegArgs } from "@/utils/ffmpeg-arg-builder";
-import type { EditConfig } from "@/utils/edit-config";
 
 const ffmpeg = new FFmpeg();
 
@@ -20,22 +17,23 @@ export default function App() {
   const [stage, setStage] = useState<Stage>("loading");
   const [ready, setReady] = useState(false);
   const [processing, setProcessing] = useState(false);
-  
   const [inputName, setInputName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [outputUrl, setOutputUrl] = useState<string | null>(null);
+  const [format, setFormat] = useState<string>("mp4"); // New state for format
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const currentObjectUrl = useRef<string | null>(null);
   const uploadedFileRef = useRef<File | null>(null);
-
-  const [editConfig, setEditConfig] = useState<EditConfig | null>(null);
 
   useEffect(() => {
     let canceled = false;
 
     const loadFFmpeg = async () => {
       try {
+        ffmpeg.on("log", ({ message }) => {
+          console.log("FFmpeg log:", message);
+        });
         await ffmpeg.load({ coreURL, wasmURL });
         if (!canceled) {
           setReady(true);
@@ -81,8 +79,7 @@ export default function App() {
     setStage("upload");
   }, []);
 
-
-  const applyEdit = useCallback(async (config: EditConfig) => {
+  const applyEdit = useCallback(async (command: string) => {
     if (!uploadedFileRef.current) return;
     setProcessing(true);
     setError(null);
@@ -94,22 +91,20 @@ export default function App() {
         await fetchFile(uploadedFileRef.current)
       );
 
-      const outputName = `output.${config.format}`;
-      const args = buildFFmpegArgs(config, "input.mp4", outputName);
-      await ffmpeg.exec(args);
+      const outputExt = command.includes("-c:v gif") ? "gif" : "mp4";
+      const outputName = `output.${outputExt}`;
+      const args = command.trim().split(/\s+/);
+      const finalArgs = ["-i", "input.mp4", ...args, outputName];
+
+      console.log("Executing FFmpeg command:", finalArgs);
+      await ffmpeg.exec(finalArgs);
+
+      console.log("Files in FS after exec:", await ffmpeg.listDir("/"));
 
       const data = await ffmpeg.readFile(outputName);
       if (!data || data.length === 0) throw new Error("Nenhuma saída gerada");
 
-      const mime =
-        config.format === "gif"
-          ? "image/gif"
-          : config.format === "mp4"
-          ? "video/mp4"
-          : config.format === "webm"
-          ? "video/webm"
-          : "video/avi";
-
+      const mime = outputExt === "gif" ? "image/gif" : "video/mp4";
       const blob = new Blob([data], { type: mime });
       const url = URL.createObjectURL(blob);
       if (currentObjectUrl.current) {
@@ -118,10 +113,10 @@ export default function App() {
       currentObjectUrl.current = url;
 
       setOutputUrl(url);
-      setEditConfig(config);
+      setFormat(outputExt); // Set format for ViewPage
       setStage("preview");
     } catch (e: any) {
-      setEditConfig(null);
+      console.error("FFmpeg error:", e);
       setError(e.message || String(e));
     } finally {
       setProcessing(false);
@@ -136,7 +131,7 @@ export default function App() {
         <div className="max-w-4xl mx-auto">
           <div className="mb-8 text-center">
             <h1 className="text-4xl font-bold text-slate-800 mb-3">
-              FFmpeg Online (GIF only)
+              FFmpeg Online
             </h1>
             <p className="text-slate-600 text-lg">
               Faça upload do seu vídeo para começar a edição
@@ -167,7 +162,7 @@ export default function App() {
                 Editando: {inputName}
               </h1>
               <p className="text-slate-600 text-lg">
-                Configure as opções de edição para seu vídeo
+                Insira um comando FFmpeg para processar seu vídeo
               </p>
             </div>
             <button
@@ -188,7 +183,7 @@ export default function App() {
     return (
       <ViewPage
         outputUrl={outputUrl}
-        format={editConfig?.format || "mp4"}
+        format={format}
         onRestart={goBackToUpload}
       />
     );
